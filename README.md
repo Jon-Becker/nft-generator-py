@@ -1,6 +1,8 @@
 
-# sudoku-solver-py
+# nft-generator-py
 nft-generator-py is a python based NFT generator which programatically generates unique images using weighted layer files. The program is simple to use, and new layers can  be added by adding a new layer object and adding names, weights, and image files to the object.
+You can [View The Demo](https://jbecker.dev/demos/nft-generator-py) here.
+
 
 ## How it works
 - A call to `generate_unique_images(amount, config)` is made, which is the meat of the application where all the processing happens.
