@@ -16,7 +16,6 @@ def create_new_image(all_images, config):
 def generate_unique_images(amount, config):
   pad_amount = len(str(amount));
   trait_files = {
-
   }
   for trait in config["layers"]:
     trait_files[trait["name"]] = {}
