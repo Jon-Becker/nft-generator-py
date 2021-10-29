@@ -1,5 +1,8 @@
 
 # nft-generator-py
+
+![preview](https://github.com/Jon-Becker/nft-generator-py/blob/main/preview.png?raw=true)
+
 nft-generator-py is a python based NFT generator which programatically generates unique images using weighted layer files. The program is simple to use, and new layers can  be added by adding a new layer object and adding names, weights, and image files to the object.
 You can [View The Demo](https://jbecker.dev/demos/nft-generator-py) here.
 
