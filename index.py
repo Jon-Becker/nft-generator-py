@@ -7,11 +7,11 @@ def create_new_image(all_images, config):
     new_image = {}
     for layer in config["layers"]:
       new_image[layer["name"]] = random.choices(layer["values"], layer["weights"])[0]
-    
+      
     if new_image in all_images:
-        return create_new_image(all_images, config)
+      return create_new_image(all_images, config)
     else:
-        return new_image
+      return new_image
 
 def generate_unique_images(amount, config):
   pad_amount = len(str(amount));
@@ -38,7 +38,7 @@ def generate_unique_images(amount, config):
       if key != "tokenId":
         attributes.append({"trait_type": key, "value": token[key]})
     token_metadata = {
-        "image": "./images/" + str(i).zfill(pad_amount) + '.png',
+        "image": config["baseURI"] + "/images/" + str(i).zfill(pad_amount) + '.png',
         "tokenId": i,
         "name":  config["name"] + str(i).zfill(pad_amount),
         "attributes": attributes
@@ -86,10 +86,10 @@ generate_unique_images(5, {
     },
     {
       "name": "Foreground",
-      "values": ["Python Logo"],
+      "values": ["Python Logo", "Python Logo 2"],
       "trait_path": "./trait-layers/foreground",
-      "filename": ["logo"],
-      "weights": [100]
+      "filename": ["logo", "logo"],
+      "weights": [50, 50]
     },
     {
       "name": "Branding",
@@ -99,6 +99,7 @@ generate_unique_images(5, {
       "weights": [100]
     }
   ],
+  "baseURI": ".",
   "name": "NFT #"
 })
 
