@@ -7,7 +7,12 @@ def create_new_image(all_images, config):
     new_image = {}
     for layer in config["layers"]:
       new_image[layer["name"]] = random.choices(layer["values"], layer["weights"])[0]
-      
+    
+    for incomp in config["incompatibilities"]:
+      for attr in new_image:
+        if new_image[incomp["layer"]] == incomp["value"] and new_image[attr] in incomp["incompatible_with"]:
+          return create_new_image(all_images, config)
+
     if new_image in all_images:
       return create_new_image(all_images, config)
     else:
@@ -82,7 +87,7 @@ generate_unique_images(5, {
       "values": ["Blue", "Orange", "Purple", "Red", "Yellow"],
       "trait_path": "./trait-layers/backgrounds",
       "filename": ["blue", "orange", "purple", "red", "yellow"],
-      "weights": [30, 45, 15, 5, 10]
+      "weights": [20,20,20,20,20]
     },
     {
       "name": "Foreground",
@@ -98,6 +103,13 @@ generate_unique_images(5, {
       "filename": ["text"],
       "weights": [100]
     }
+  ],
+  "incompatibilities": [
+    {
+      "layer": "Background",
+      "value": "Blue",
+      "incompatible_with": ["Python Logo 2"]
+    },  #  Blue backgrounds will never have the attribute "Python Logo 2".
   ],
   "baseURI": ".",
   "name": "NFT #"
