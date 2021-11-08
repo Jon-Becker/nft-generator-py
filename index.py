@@ -47,13 +47,13 @@ def generate_unique_images(amount, config):
       if key != "tokenId":
         attributes.append({"trait_type": key, "value": token[key]})
     token_metadata = {
-        "image": config["baseURI"] + "/images/" + str(i).zfill(pad_amount) + '.png',
+        "image": config["baseURI"] + "/images/" + str(i) + '.png',
         "tokenId": i,
         "name":  config["name"] + str(i).zfill(pad_amount),
         "description": config["description"],
         "attributes": attributes
     }
-    with open('./metadata/' + str(i).zfill(pad_amount) + '.json', 'w') as outfile:
+    with open('./metadata/' + str(i) + '.json', 'w') as outfile:
         json.dump(token_metadata, outfile, indent=4)
 
   with open('./metadata/all-objects.json', 'w') as outfile:
@@ -68,7 +68,7 @@ def generate_unique_images(amount, config):
 
     if len(layers) == 1:
       rgb_im = layers[0].convert('RGB')
-      file_name = str(item["tokenId"]).zfill(pad_amount) + ".png"
+      file_name = str(item["tokenId"]) + ".png"
       rgb_im.save("./images/" + file_name)
     elif len(layers) == 2:
       main_composite = Image.alpha_composite(layers[0], layers[1])
@@ -94,13 +94,13 @@ def generate_unique_images(amount, config):
     if cid.endswith("/"):
       cid = cid[:-1]
     for i, token in enumerate(all_images):
-      with open('./metadata/' + str(i).zfill(pad_amount) + '.json', 'r') as infile:
+      with open('./metadata/' + str(i) + '.json', 'r') as infile:
         original_json = json.loads(infile.read())
         original_json["image"] = original_json["image"].replace(config["baseURI"]+"/", cid+"/")
-        with open('./metadata/' + str(i).zfill(pad_amount) + '.json', 'w') as outfile:
+        with open('./metadata/' + str(i) + '.json', 'w') as outfile:
           json.dump(original_json, outfile, indent=4)
 
-generate_unique_images(5, {
+generate_unique_images(11, {
   "layers": [
     {
       "name": "Background",
@@ -111,17 +111,17 @@ generate_unique_images(5, {
     },
     {
       "name": "Foreground",
-      "values": ["Python Logo", "Python Logo 2"],
+      "values": ["Python Logo", "Python Logo 32"],
       "trait_path": "./trait-layers/foreground",
       "filename": ["logo", "logo"],
       "weights": [50, 50]
     },
     {
       "name": "Branding",
-      "values": ["A Name"],
+      "values": ["A Name", "Another Name"],
       "trait_path": "./trait-layers/text",
-      "filename": ["text"],
-      "weights": [100]
+      "filename": ["text", "text"],
+      "weights": [50, 50]
     }
   ],
   "incompatibilities": [
