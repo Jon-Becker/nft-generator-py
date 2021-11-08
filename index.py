@@ -2,6 +2,9 @@ from IPython.display import display
 from PIL import Image
 import random
 import json
+import os
+
+os.system('cls' if os.name=='nt' else 'clear')
 
 def create_new_image(all_images, config):
     new_image = {}
@@ -19,6 +22,7 @@ def create_new_image(all_images, config):
       return new_image
 
 def generate_unique_images(amount, config):
+  print("Generating {} unique NFTs...".format(amount))
   pad_amount = len(str(amount));
   trait_files = {
   }
@@ -46,6 +50,7 @@ def generate_unique_images(amount, config):
         "image": config["baseURI"] + "/images/" + str(i).zfill(pad_amount) + '.png',
         "tokenId": i,
         "name":  config["name"] + str(i).zfill(pad_amount),
+        "description": config["description"],
         "attributes": attributes
     }
     with open('./metadata/' + str(i).zfill(pad_amount) + '.json', 'w') as outfile:
@@ -79,6 +84,21 @@ def generate_unique_images(amount, config):
       rgb_im = main_composite.convert('RGB')
       file_name = str(item["tokenId"]) + ".png"
       rgb_im.save("./images/" + file_name)
+  
+  # v1.0.2 addition
+  print("\nUnique NFT's generated. After uploading images to IPFS, please paste the CID below.\nYou may hit ENTER or CTRL+C to quit.")
+  cid = input("IPFS Image CID (): ")
+  if len(cid) > 0:
+    if not cid.startswith("ipfs://"):
+      cid = "ipfs://{}".format(cid)
+    if cid.endswith("/"):
+      cid = cid[:-1]
+    for i, token in enumerate(all_images):
+      with open('./metadata/' + str(i).zfill(pad_amount) + '.json', 'r') as infile:
+        original_json = json.loads(infile.read())
+        original_json["image"] = original_json["image"].replace(config["baseURI"]+"/", cid+"/")
+        with open('./metadata/' + str(i).zfill(pad_amount) + '.json', 'w') as outfile:
+          json.dump(original_json, outfile, indent=4)
 
 generate_unique_images(5, {
   "layers": [
@@ -109,10 +129,11 @@ generate_unique_images(5, {
       "layer": "Background",
       "value": "Blue",
       "incompatible_with": ["Python Logo 2"]
-    },  #  Blue backgrounds will never have the attribute "Python Logo 2".
+    },  #  @dev : Blue backgrounds will never have the attribute "Python Logo 2".
   ],
   "baseURI": ".",
-  "name": "NFT #"
+  "name": "NFT #",
+  "description": "This is a description for this NFT series."
 })
 
 #Additional layer objects can be added following the above formats. They will automatically be composed along with the rest of the layers as long as they are the same size as eachother.
