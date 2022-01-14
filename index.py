@@ -93,7 +93,7 @@ def generate_unique_images(amount, config):
       cid = "ipfs://{}".format(cid)
     if cid.endswith("/"):
       cid = cid[:-1]
-    for i, token in enumerate(all_images):
+    for i, item in enumerate(all_images):
       with open('./metadata/' + str(item["tokenId"]) + '.json', 'r') as infile:
         original_json = json.loads(infile.read())
         original_json["image"] = original_json["image"].replace(config["baseURI"]+"/", cid+"/")
