@@ -23,13 +23,13 @@ def create_new_image(all_images, config):
 
 def generate_unique_images(amount, config):
   print("Generating {} unique NFTs...".format(amount))
-  pad_amount = len(str(amount));
+  pad_amount = len(str(amount))
   trait_files = {
   }
   for trait in config["layers"]:
     trait_files[trait["name"]] = {}
     for x, key in enumerate(trait["values"]):
-      trait_files[trait["name"]][key] = trait["filename"][x];
+      trait_files[trait["name"]][key] = trait["filename"][x]
   
   all_images = []
   for i in range(amount): 
@@ -60,7 +60,7 @@ def generate_unique_images(amount, config):
     json.dump(all_images, outfile, indent=4)
   
   for item in all_images:
-    layers = [];
+    layers = []
     for index, attr in enumerate(item):
       if attr != 'tokenId':
         layers.append([])
