@@ -3,3 +3,4 @@ workspace.code-workspace
 metadata/*.json
 images/*.png
 .ipynb_checkpoints/
+*.pyc

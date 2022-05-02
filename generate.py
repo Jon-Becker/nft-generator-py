@@ -1,8 +1,11 @@
 from IPython.display import display 
 from PIL import Image
+import argparse
 import random
 import json
 import os
+
+from lib.util.io import loadJSON, pathExists
 
 os.system('cls' if os.name=='nt' else 'clear')
 
@@ -100,41 +103,25 @@ def generate_unique_images(amount, config):
         with open('./metadata/' + str(item["tokenId"]) + '.json', 'w') as outfile:
           json.dump(original_json, outfile, indent=4)
 
-generate_unique_images(11, {
-  "layers": [
-    {
-      "name": "Background",
-      "values": ["Blue", "Orange", "Purple", "Red", "Yellow"],
-      "trait_path": "./trait-layers/backgrounds",
-      "filename": ["blue", "orange", "purple", "red", "yellow"],
-      "weights": [20,20,20,20,20]
-    },
-    {
-      "name": "Foreground",
-      "values": ["Python Logo", "Python Logo 32"],
-      "trait_path": "./trait-layers/foreground",
-      "filename": ["logo", "logo"],
-      "weights": [50, 50]
-    },
-    {
-      "name": "Branding",
-      "values": ["A Name", "Another Name"],
-      "trait_path": "./trait-layers/text",
-      "filename": ["text", "text"],
-      "weights": [50, 50]
-    }
-  ],
-  "incompatibilities": [
-    {
-      "layer": "Background",
-      "value": "Blue",
-      "incompatible_with": ["Python Logo 2"]
-    },  #  @dev : Blue backgrounds will never have the attribute "Python Logo 2".
-  ],
-  "baseURI": ".",
-  "name": "NFT #",
-  "description": "This is a description for this NFT series."
-})
+
 
 #Additional layer objects can be added following the above formats. They will automatically be composed along with the rest of the layers as long as they are the same size as eachother.
 #Objects are layered starting from 0 and increasing, meaning the front layer will be the last object. (Branding)
+
+
+generator = argparse.ArgumentParser(prog='generate', usage='generate.py [options]')
+
+generator.add_argument('-n', '--amount', help="Amount to generate")
+generator.add_argument('-c', '--config', help="Path to configuration file")
+
+args = generator.parse_args()
+
+if args.amount and args.config:
+  if pathExists(args.config):
+    generate_unique_images(int(args.amount), loadJSON(args.config))
+  else:
+    print('heimdall: error: Configuration file specified doesn\'t exist.\n')
+
+else:
+  print('heimdall: error: Missing a mandatory option (-n or -c). Use -h to show the help menu.\n')
+#generate_unique_images(args.amo, )
