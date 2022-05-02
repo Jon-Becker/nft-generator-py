@@ -120,8 +120,8 @@ if args.amount and args.config:
   if pathExists(args.config):
     generate_unique_images(int(args.amount), loadJSON(args.config))
   else:
-    print('heimdall: error: Configuration file specified doesn\'t exist.\n')
+    print('generator: error: Configuration file specified doesn\'t exist.\n')
 
 else:
-  print('heimdall: error: Missing a mandatory option (-n or -c). Use -h to show the help menu.\n')
+  print('generator: error: Missing a mandatory option (-n or -c). Use -h to show the help menu.\n')
 #generate_unique_images(args.amo, )
