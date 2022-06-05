@@ -1,3 +1,4 @@
+from collections import Counter
 from IPython.display import display 
 from PIL import Image
 import argparse
@@ -87,6 +88,14 @@ def generate_unique_images(amount, config):
       rgb_im = main_composite.convert('RGBA')
       file_name = str(item["tokenId"]) + ".png"
       rgb_im.save("./images/" + file_name)
+  
+  all_token_rarity = []
+  for layer in config["layers"]:
+    all_token_rarity.append({ layer["name"]: Counter(image[layer["name"]] for image in all_images) })
+
+  with open('./metadata/all-rarity.json', 'w') as outfile:
+    json.dump(all_token_rarity, outfile, indent=4)
+
   
   # v1.0.2 addition
   print("\nUnique NFT's generated. After uploading images to IPFS, please paste the CID below.\nYou may hit ENTER or CTRL+C to quit.")
