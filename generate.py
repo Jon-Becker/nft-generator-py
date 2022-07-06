@@ -1,5 +1,4 @@
 from collections import Counter
-from IPython.display import display 
 from PIL import Image
 import argparse
 import random
