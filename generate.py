@@ -14,10 +14,16 @@ def create_new_image(all_images, config):
     for layer in config["layers"]:
       new_image[layer["name"]] = random.choices(layer["values"], layer["weights"])[0]
     
+    # check for incompatibilities
     for incomp in config["incompatibilities"]:
       for attr in new_image:
         if new_image[incomp["layer"]] == incomp["value"] and new_image[attr] in incomp["incompatible_with"]:
-          return create_new_image(all_images, config)
+          
+          # if a default incompatibility value is set, use it instead
+          if "default" in incomp:
+            new_image[attr] = incomp["default"]["value"]
+          else:
+            return create_new_image(all_images, config)
 
     if new_image in all_images:
       return create_new_image(all_images, config)
@@ -27,13 +33,20 @@ def create_new_image(all_images, config):
 def generate_unique_images(amount, config):
   print("Generating {} unique NFTs...".format(amount))
   pad_amount = len(str(amount))
-  trait_files = {
-  }
+  trait_files = {}
+  
+  # build trait dict
   for trait in config["layers"]:
     trait_files[trait["name"]] = {}
     for x, key in enumerate(trait["values"]):
       trait_files[trait["name"]][key] = trait["filename"][x]
-  
+    
+  for incomp in config["incompatibilities"]:
+    if "default" in incomp:
+      for layer in trait_files:
+        trait_files[layer][incomp["default"]["value"]] = incomp["default"]["filename"]
+        
+  # generate n unique images
   all_images = []
   for i in range(amount): 
     new_trait_image = create_new_image(all_images, config)
@@ -44,6 +57,7 @@ def generate_unique_images(amount, config):
       item["tokenId"] = i
       i += 1
 
+  # dump unique images
   for i, token in enumerate(all_images):
     attributes = []
     for key in token:
@@ -67,7 +81,11 @@ def generate_unique_images(amount, config):
     for index, attr in enumerate(item):
       if attr != 'tokenId':
         layers.append([])
-        layers[index] = Image.open(f'{config["layers"][index]["trait_path"]}/{trait_files[attr][item[attr]]}.png').convert('RGBA')
+        
+        if "/" in trait_files[attr][item[attr]]:
+          layers[index] = Image.open(f'{trait_files[attr][item[attr]]}.png').convert('RGBA')
+        else:
+          layers[index] = Image.open(f'{config["layers"][index]["trait_path"]}/{trait_files[attr][item[attr]]}.png').convert('RGBA')
 
     if len(layers) == 1:
       rgb_im = layers[0].convert('RGBA')

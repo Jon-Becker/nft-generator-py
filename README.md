@@ -40,8 +40,12 @@ As of v2.0.0, nft-generator-py will use the argparse library in order to support
     {
       "layer": "Background",
       "value": "Blue",
-      "incompatible_with": ["Python Logo 2"]
-    },
+      "incompatible_with": ["Python Logo 2"],
+      "default": {
+        "value": "Default Incompatibility",
+        "filename": "./trait-layers/foreground/logo"
+      }
+    }
   ],
   "baseURI": ".",
   "name": "NFT #",
@@ -62,6 +66,9 @@ The `incompatibilities` list contains an object that tells the program what laye
 - `layer` refers to the targeted layer.
 - `value` is the value of the layer that is incompatible with attributes within the `incompatible_with` list.
 - `incompatible_with` is the list of incompatible layers that will never be selected when `layer` has attribute `value`.
+- An optional `default` object can be provided to each incompatibility. This object will be selected 100% of the time if present and an incompatible layer is selected. The `default` object has a `value` and `filename` attribute.
+  - `value` is the name of the default selection which will be displayed in the metadata.
+  - `filename` is the path to the image file that will be used as the default selection.
 
 As of `v1.0.2`, the IPFS CID may be updated programatically after generating NFTs and uploading `/images` to IPFS. This will update all metadata files to correctly point `"image"` to the IPFS CID.
 - *This is an optional step, and can be exited safely using `enter` or `control + c`.*

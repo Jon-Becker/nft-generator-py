@@ -9,10 +9,10 @@
     },
     {
       "name": "Foreground",
-      "values": ["Python Logo", "Python Logo 32"],
+      "values": ["Python Logo", "Python Logo 2", "Python Logo 3", "Python Logo 4", "Python Logo 5"],
       "trait_path": "./trait-layers/foreground",
-      "filename": ["logo", "logo"],
-      "weights": [50, 50]
+      "filename": ["logo", "logo", "logo", "logo", "logo"],
+      "weights": [20,20,20,20,20]
     },
     {
       "name": "Branding",
@@ -26,7 +26,11 @@
     {
       "layer": "Background",
       "value": "Blue",
-      "incompatible_with": ["Python Logo 2"]
+      "incompatible_with": ["Python Logo 2"],
+      "default": {
+        "value": "Default Incompatibility",
+        "filename": "./trait-layers/foreground/logo"
+      }
     }
   ],
   "baseURI": ".",
