@@ -2,7 +2,6 @@ import os
 import json
 from collections import Counter
 from PIL import Image
-import argparse
 import random
 import json
 import os
@@ -25,7 +24,7 @@ class NFTGenerator:
             contents = json.loads("".join(pathFile.readlines()))
         return contents
 
-    def create_new_image(self, all_images):
+    def __create_new_image(self, all_images):
         new_image = {}
         for layer in self.config["layers"]:
             new_image[layer["name"]] = random.choices(layer["values"], layer["weights"])[0]
@@ -39,10 +38,10 @@ class NFTGenerator:
                     if "default" in incomp:
                         new_image[attr] = incomp["default"]["value"]
                     else:
-                        return create_new_image(all_images, self.config)
+                        return self.__create_new_image(all_images, self.config)
 
         if new_image in all_images:
-            return create_new_image(all_images, self.config)
+            return self.__create_new_image(all_images, self.config)
         else:
             return new_image
 
@@ -65,7 +64,7 @@ class NFTGenerator:
         # generate n unique images
         all_images = []
         for i in range(self.amount): 
-            new_trait_image = create_new_image(all_images, self.config)
+            new_trait_image = self.__create_new_image(all_images, self.config)
             all_images.append(new_trait_image)
 
         i = 1
@@ -211,15 +210,16 @@ class NFTGenerator:
         print(jsondump)
         print("adding config to directory and configuring generator")
         self.config = jsondump
-        with open('config_CHECKandRENAME.json', 'w') as outfile:
+        with open('config.json', 'w') as outfile:
             json.dump(jsondump, outfile)
 
     def start_generating(self):
         if self.amount and self.config:
             if self.__pathExists(self.config):
-                generate_unique_images(int(self.amount), self.__loadJSON(self.config))
+                self.generate_unique_images(int(self.amount), self.__loadJSON(self.config))
             else:
                 print('generator: error: Configuration file specified doesn\'t exist.\n')
+
         else:
             print('generator: error: Missing a mandatory option (-n or -c). Use -h to show the help menu.\n')
 
