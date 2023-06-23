@@ -9,8 +9,6 @@ import os
 #Additional layer objects can be added following the formats. They will automatically be composed along with the rest of the layers as long as they are the same size as eachother.
 #Objects are layered starting from 0 and increasing, meaning the front layer will be the last object. (Branding)
 
-
-
 class NFTGenerator:
     def __init__(self, config:str=None, amount:int=0):
         self.config = config
@@ -167,22 +165,26 @@ class NFTGenerator:
                     with open('./metadata/' + str(item["tokenId"]) + '.json', 'w') as outfile:
                         json.dump(original_json, outfile, indent=4)
 
-    def generate_config(self):
-        # generates the config.json file with balanced rarities, script should be placed in the main directory.
-        layerlist = os.listdir("./trait-layers")
-        url_list = []
-        item_list = []
-        weight = []
+    def __list_full_dir(self,path:str) -> list:
+        return glob.glob(os.path.join(path, '*'))
 
-        for items in layerlist:
-            url_list.append("./trait-layers" + "/" + items)
-        for items in url_list:
-            item_list.append(os.listdir(items))
+    def __list_name(self,path:str) -> list:
+        return [os.path.basename(x) for x in glob.glob(path)]
+
+    def generate_config(self, trait_dir:str,baseURI:str,name:str,description:str):
+        # generates the config.json file with balanced rarities, script should be placed in the main directory.
+        layerlist = self.__list_name(f'{trait_dir}/*')
+        path_list = self.__list_full_dir(f'{trait_dir}/')
+        item_list = [self.__list_name(items+"/*") for items in path_list]
+
+        #calculate weight
+        weight = []
         for i in range(len(item_list)):
             weight.append(100/len(item_list[i]))
             for j in range(len(item_list[i])):
                 if ".png" in item_list[i][j]:
                     item_list[i][j] = item_list[i][j][:-4]
+
         weightlist = []*len(layerlist)
 
         for i in range(len(weight)):
@@ -191,35 +193,44 @@ class NFTGenerator:
             for y in range(int(x)):
                 temp1.append(weight[i])
             weightlist.append(temp1)
-        print(weightlist)
 
+        #generate json blob
         finstr = ""
         jsonstringarray = []
         jsonstring = ""
         for x in range(len(layerlist)):
-            jsonstring = '{"name": "' + layerlist[x] + '", "values": ' + str(item_list[x]) + ', "trait_path": "' + url_list[x] + '", "filename": ' + str(item_list[x]) + ', "weights": ' + str(weightlist[x]) + '}'
+            jsonstring = '{"name": "' + layerlist[x] + '", "values": ' + str(item_list[x]) + ', "trait_path": "' + path_list[x] + '", "filename": ' + str(item_list[x]) + ', "weights": ' + str(weightlist[x]) + '}'
             jsonstringarray.append(jsonstring.replace("'",'"'))
 
-        finstr = str(jsonstringarray).replace("'", "")
-
-        jsondict = {"layers":finstr, "incompatibilities":[], "baseURI": "ipfs://xxxx/", "name": "Item #", "description": "description here please"}
-        finstr2 = str(jsondict).replace("'",'"')
-        finstr2 = finstr2.replace('"layers": "', '"layers": ')
-        finstr2 = finstr2.replace('", "incompatibilities"', ', "incompatibilities"')
-        jsondump = json.loads(finstr2)
-        print(jsondump)
+        jsondict = {"layers":str(jsonstringarray).replace("'", ""), 
+                    "incompatibilities":[], 
+                    "baseURI": f"{baseURI}/", 
+                    "name": name, 
+                    "description": description}
+        jsondump = json.loads(
+            str(jsondict)
+            .replace("'",'"')
+            .replace('"layers": "', '"layers": ')
+            .replace('", "incompatibilities"', ', "incompatibilities"')
+            )
         print("adding config to directory and configuring generator")
-        self.config = jsondump
+
         with open('config.json', 'w') as outfile:
             json.dump(jsondump, outfile)
+        self.config = self.__loadJSON(outfile)       
+        return("json file generated and loaded into generator")
 
-    def start_generating(self):
-        if self.amount and self.config:
-            if self.__pathExists(self.config):
-                self.generate_unique_images(int(self.amount), self.__loadJSON(self.config))
-            else:
-                print('generator: error: Configuration file specified doesn\'t exist.\n')
+    def start_generating(self, config_path:str=None):
+        if self.amount and self.config:            
+            self.generate_unique_images(int(self.amount), self.config)
 
+        elif self.amount and not self.config:    
+            if self.__pathExists(config_path):
+                self.config = self.__loadJSON(config_path)
+                self.generate_unique_images(int(self.amount), self.config)
+
+        elif not self.amount and self.config:
+            print("generator: error: Amount of images to generate not specified.\n")
+            
         else:
-            print('generator: error: Missing a mandatory option (-n or -c). Use -h to show the help menu.\n')
-
+            print('generator: error: Configuration file specified doesn\'t exist.\n')
