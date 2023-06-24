@@ -5,7 +5,7 @@ from PIL import Image
 import random
 import json
 import os
-
+import glob
 #Additional layer objects can be added following the formats. They will automatically be composed along with the rest of the layers as long as they are the same size as eachother.
 #Objects are layered starting from 0 and increasing, meaning the front layer will be the last object. (Branding)
 
@@ -218,7 +218,7 @@ class NFTGenerator:
             .replace('"layers": "', '"layers": ')
             .replace('", "incompatibilities"', ', "incompatibilities"')
             )
-        print("adding config to directory and configuring generator")
+        print("saving config to directory and configuring generator")
 
         with open('config.json', 'w') as outfile:
             json.dump(jsondump, outfile)
