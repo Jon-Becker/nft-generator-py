@@ -218,8 +218,8 @@ class NFTGenerator:
             .replace('"layers": "', '"layers": ')
             .replace('", "incompatibilities"', ', "incompatibilities"')
             )
-        print("saving config to directory and configuring generator")
 
+        print("saving config to directory and configuring generator")
         with open('config.json', 'w') as outfile:
             json.dump(jsondump, outfile)
         print("json file generated and loaded into generator")
@@ -227,12 +227,12 @@ class NFTGenerator:
 
     def start_generating(self, config_path:str=None):
         if self.amount and self.config:            
-            self.generate_unique_images(int(self.amount), self.config)
+            self.generate_unique_images()
 
         elif self.amount and not self.config:    
             if self.__pathExists(config_path):
                 self.config = self.load_config_from_file(config_path)
-                self.generate_unique_images(int(self.amount), self.config)
+                self.generate_unique_images()
 
         elif not self.amount and self.config:
             print("generator: error: Amount of images to generate not specified.\n")
