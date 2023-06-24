@@ -222,7 +222,7 @@ class NFTGenerator:
 
         with open('config.json', 'w') as outfile:
             json.dump(jsondump, outfile)
-        self.config = self.load_config_from_file(outfile)       
+        self.config = self.load_config_from_file('config.json')       
         return("json file generated and loaded into generator")
 
     def start_generating(self, config_path:str=None):
