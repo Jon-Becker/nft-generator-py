@@ -14,24 +14,24 @@ class NFTGenerator:
         self.config = config
         self.amount = amount
 
-    def __pathExists(self,dirPath):
+    def __pathExists(self,dirPath:str)->bool:
         return os.path.exists(dirPath)
 
-    def __loadJSON(self, path):
+    def __loadJSON(self, path:str)->dict:
         with open(path) as pathFile:
             contents = json.loads("".join(pathFile.readlines()))
         return contents
 
-    def load_config_from_file(self, config_path:str):
+    def load_config_from_file(self, config_path:str) -> None:
         if not self.__pathExists(config_path):
             raise Exception("Config file not found.")
         else:
             self.config = self.__loadJSON(config_path)
 
-    def load_config_from_string(self, config:dict):
+    def load_config_from_string(self, config:dict) -> None:
         self.config = json.loads(json.dumps(config))
 
-    def __create_new_image(self, all_images):
+    def __create_new_image(self, all_images) -> dict:
         new_image = {}
         for layer in self.config["layers"]:
             new_image[layer["name"]] = random.choices(layer["values"], layer["weights"])[0]
@@ -52,7 +52,7 @@ class NFTGenerator:
         else:
             return new_image
 
-    def generate_unique_images(self):
+    def generate_unique_images(self) -> None:
         print("Generating {} unique NFTs...".format(self.amount))
         pad_amount = len(str(self.amount))
         trait_files = {}
@@ -137,7 +137,7 @@ class NFTGenerator:
         print("\nUnique NFT's generated. you may upload to ipfs now")
 
 
-    def uploadToIPFS(self, cid):        
+    def uploadToIPFS(self, cid:str) -> None:        
         f = open('./metadata/all-objects.json')
         all_images = json.load(f)
         # upload to IPFS
@@ -152,8 +152,9 @@ class NFTGenerator:
                     original_json["image"] = original_json["image"].replace(self.config["baseURI"]+"/", cid+"/")
                     with open('./metadata/' + str(item["tokenId"]) + '.json', 'w') as outfile:
                         json.dump(original_json, outfile, indent=4)
+        print("updated cid in metadata files")
 
-    def update_cid(self, cid:str):
+    def update_cid(self, cid:str) -> None:
         #updates the CID in the metadata files
         f = open('./metadata/all-objects.json')
         all_images = json.load(f)
@@ -169,6 +170,7 @@ class NFTGenerator:
                     original_json["image"] = f'{cid}/{str(item["tokenId"])}.png'
                     with open('./metadata/' + str(item["tokenId"]) + '.json', 'w') as outfile:
                         json.dump(original_json, outfile, indent=4)
+        print("updated cid in metadata files")
 
     def __list_full_dir(self,path:str) -> list:
         return glob.glob(os.path.join(path, '*'))
@@ -176,7 +178,7 @@ class NFTGenerator:
     def __list_name(self,path:str) -> list:
         return [os.path.basename(x) for x in glob.glob(path)]
 
-    def generate_config(self, trait_dir:str,baseURI:str,name:str,description:str):
+    def generate_config(self, trait_dir:str,baseURI:str,name:str,description:str) -> None:
         # generates the config.json file with balanced rarities, script should be placed in the main directory.
         layerlist = self.__list_name(f'{trait_dir}/*')
         path_list = self.__list_full_dir(f'{trait_dir}/')
@@ -223,9 +225,9 @@ class NFTGenerator:
         with open('config.json', 'w') as outfile:
             json.dump(jsondump, outfile)
         print("json file generated and loaded into generator")
-        return self.load_config_from_string(jsondump)
+        self.load_config_from_string(jsondump)
 
-    def start_generating(self, config_path:str=None):
+    def start_generating(self, config_path:str=None) -> None:
         if self.amount and self.config:            
             self.generate_unique_images()
 
