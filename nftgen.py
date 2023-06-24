@@ -209,7 +209,7 @@ class NFTGenerator:
 
         jsondict = {"layers":str(jsonstringarray).replace("'", ""), 
                     "incompatibilities":[], 
-                    "baseURI": f"{baseURI}/", 
+                    "baseURI": f"{baseURI}", 
                     "name": name, 
                     "description": description}
         jsondump = json.loads(
