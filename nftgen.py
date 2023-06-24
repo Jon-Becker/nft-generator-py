@@ -45,10 +45,10 @@ class NFTGenerator:
                     if "default" in incomp:
                         new_image[attr] = incomp["default"]["value"]
                     else:
-                        return self.__create_new_image(all_images, self.config)
+                        return self.__create_new_image(all_images)
 
         if new_image in all_images:
-            return self.__create_new_image(all_images, self.config)
+            return self.__create_new_image(all_images)
         else:
             return new_image
 
@@ -71,7 +71,7 @@ class NFTGenerator:
         # generate n unique images
         all_images = []
         for i in range(self.amount): 
-            new_trait_image = self.__create_new_image(all_images, self.config)
+            new_trait_image = self.__create_new_image(all_images)
             all_images.append(new_trait_image)
 
         i = 1
