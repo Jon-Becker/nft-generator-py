@@ -109,24 +109,24 @@ class NFTGenerator:
                     else:
                         layers[index] = Image.open(f'{self.config["layers"][index]["trait_path"]}/{trait_files[attr][item[attr]]}.png').convert('RGBA')
 
-                if len(layers) == 1:
-                    rgb_im = layers[0].convert('RGBA')
-                    file_name = str(item["tokenId"]) + ".png"
-                    rgb_im.save("./images/" + file_name)
-                elif len(layers) == 2:
-                    main_composite = Image.alpha_composite(layers[0], layers[1])
-                    rgb_im = main_composite.convert('RGBA')
-                    file_name = str(item["tokenId"]) + ".png"
-                    rgb_im.save("./images/" + file_name)
-                elif len(layers) >= 3:
-                    main_composite = Image.alpha_composite(layers[0], layers[1])
-                    layers.pop(0)
-                    layers.pop(0)
-                    for index, remaining in enumerate(layers):
-                        main_composite = Image.alpha_composite(main_composite, remaining)
-                    rgb_im = main_composite.convert('RGBA')
-                    file_name = str(item["tokenId"]) + ".png"
-                    rgb_im.save("./images/" + file_name)
+            if len(layers) == 1:
+                rgb_im = layers[0].convert('RGBA')
+                file_name = str(item["tokenId"]) + ".png"
+                rgb_im.save("./images/" + file_name)
+            elif len(layers) == 2:
+                main_composite = Image.alpha_composite(layers[0], layers[1])
+                rgb_im = main_composite.convert('RGBA')
+                file_name = str(item["tokenId"]) + ".png"
+                rgb_im.save("./images/" + file_name)
+            elif len(layers) >= 3:
+                main_composite = Image.alpha_composite(layers[0], layers[1])
+                layers.pop(0)
+                layers.pop(0)
+                for index, remaining in enumerate(layers):
+                    main_composite = Image.alpha_composite(main_composite, remaining)
+                rgb_im = main_composite.convert('RGBA')
+                file_name = str(item["tokenId"]) + ".png"
+                rgb_im.save("./images/" + file_name)
         
         all_token_rarity = []
         for layer in self.config["layers"]:
