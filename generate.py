@@ -24,13 +24,14 @@ def create_new_image(all_images, config):
             new_image[attr] = incomp["default"]["value"]
           else:
             return create_new_image(all_images, config)
+    print("New Image",new_image)
+    print("All Image",all_images)
+    # if new_image in all_images:
+    #   return create_new_image(all_images, config)
+    # else:
+    return new_image
 
-    if new_image in all_images:
-      return create_new_image(all_images, config)
-    else:
-      return new_image
-
-def generate_unique_images(amount, config):
+def generate_unique_images(amount, config, approach_type):
   print("Generating {} unique NFTs...".format(amount))
   pad_amount = len(str(amount))
   trait_files = {}
@@ -50,7 +51,14 @@ def generate_unique_images(amount, config):
   all_images = []
   for i in range(amount): 
     new_trait_image = create_new_image(all_images, config)
-    all_images.append(new_trait_image)
+    if approach_type == 1:
+      if new_trait_image not in all_images:
+        all_images.append(new_trait_image)
+    elif approach_type == 2:
+      all_images.append(new_trait_image)
+    elif approach_type == 3:
+      if new_trait_image in all_images:
+         return create_new_image(all_images, config)
 
   i = 1
   for item in all_images:
@@ -63,11 +71,15 @@ def generate_unique_images(amount, config):
     for key in token:
       if key != "tokenId":
         attributes.append({"trait_type": key, "value": token[key]})
+    for value in config["attributes"]:
+          print("Attributes:", value)
+          attributes.append(value)
     token_metadata = {
         "image": config["baseURI"] + "/images/" + str(token["tokenId"]) + '.png',
         "tokenId": token["tokenId"],
         "name":  config["name"] + str(token["tokenId"]).zfill(pad_amount),
         "description": config["description"],
+        "animation_url":config["animation_url"],
         "attributes": attributes
     }
     with open('./metadata/' + str(token["tokenId"]) + '.json', 'w') as outfile:
@@ -139,15 +151,17 @@ generator = argparse.ArgumentParser(prog='generate', usage='generate.py [options
 
 generator.add_argument('-n', '--amount', help="Amount to generate")
 generator.add_argument('-c', '--config', help="Path to configuration file")
+generator.add_argument('--sum', metavar='N', type=int, help="Approach type number")
 
 args = generator.parse_args()
 
 if args.amount and args.config:
   if pathExists(args.config):
-    generate_unique_images(int(args.amount), loadJSON(args.config))
+    generate_unique_images(int(args.amount), loadJSON(args.config), int(args.approach))
   else:
     print('generator: error: Configuration file specified doesn\'t exist.\n')
 
 else:
   print('generator: error: Missing a mandatory option (-n or -c). Use -h to show the help menu.\n')
 #generate_unique_images(args.amo, )
+
