@@ -27,6 +27,7 @@ class Generator:
             elif not args.amount.isnumeric():
                 raise ValueError("Invalid amount '{}'".format(args.amount))
             self.amount = int(args.amount)
+            self.no_pad = args.no_pad
             self.pad_amount = 0 if self.no_pad else len(str(self.amount))
 
             # read configuration and validate it
@@ -44,7 +45,6 @@ class Generator:
         self.start_at = int(args.start_at)
         self.output = args.output
         self.allow_duplicates = args.allow_duplicates
-        self.no_pad = args.no_pad
         self.image_path = args.image_path
 
         # initialize state
