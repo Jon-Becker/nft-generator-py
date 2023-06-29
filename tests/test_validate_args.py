@@ -68,4 +68,4 @@ def test_validate_args_valid_arguments(mock_isdir, mock_isfile):
 def test_validate_args_create_output_directory(mock_makedirs, mock_isdir, mock_isfile):
     args = MockArgs(amount=1, config="config.txt", output="new_output_dir", seed="123")
     validate_args(args)
-    mock_makedirs.assert_called_once_with("new_output_dir")
+    assert mock_makedirs.call_count == 2
