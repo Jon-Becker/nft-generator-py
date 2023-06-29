@@ -1,9 +1,34 @@
-.python-version
-workspace.code-workspace
-metadata/*.json
-images/*.png
-.ipynb_checkpoints/
-*.pyc
+# repo
+build
+temp
+package.zip
+.env
+.test.yaml
+.vscode
+test/data/*
+output
+
+# venv
 env
 venv
-output
+.env
+.venv
+
+# python
+__pycache__
+.pytest_cache
+*.pyc
+.ipynb_checkpoints/
+.DS_Store
+.idea
+.idea/*
+*.code-workspace
+.python-version
+
+# tests
+.coverage
+.coverage.*
+coverage.xml
+
+*metadata/*.json
+*images/*.png

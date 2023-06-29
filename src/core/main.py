@@ -1,39 +1,76 @@
-import concurrent.futures
+import os
+import random
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from PIL import Image
-from tqdm import tqdm
 
 from src.common.validate import validate_config
 from src.utils.calc import calculate_possible_combinations
-from src.utils.io import load_config, write_json
-from src.utils.logger import get_logger
+from src.utils.io import read_json, write_file, write_json
+from src.utils.logger import get_logger, get_progress_bar
 from src.utils.random import seeded_weighted_selection
 
 
 class Generator:
     def __init__(self, args):
-        # set verbosity level (0 = silent, 1 = normal, 2 = verbose) and initialize logger
-        self.verbosity = args.verbose + 1
-        self.logger = get_logger(max(50 - (10 * self.verbosity), 10))
+        # set verbosity level and initialize logger
+        self.logger = get_logger(args.verbose)
 
-        # read configuration and validate it
-        self.logger.debug("Loading configuration from '%s'", args.config)
-        self.config = load_config(args.config)
-        self.logger.debug("Validating configuration")
-        validate_config(self.config)
+        if args.command in ["generate", "validate"]:
+            if not args.config:
+                raise ValueError("No configuration file was provided.")
+            elif not args.config.endswith(".json"):
+                raise ValueError("Invalid configuration file '{}'".format(args.config))
+
+            if not args.amount:
+                raise ValueError("No amount was provided.")
+            elif not args.amount.isnumeric():
+                raise ValueError("Invalid amount '{}'".format(args.amount))
+            self.amount = int(args.amount)
+            self.pad_amount = 0 if self.no_pad else len(str(self.amount))
+
+            # read configuration and validate it
+            self.logger.debug("Loading configuration from '%s'", args.config)
+            self.config = read_json(args.config)
+            self.logger.debug("Validating configuration")
+            validate_config(self.config)
 
         # set arguments
-        self.amount = int(args.amount)
-        self.seed = int(args.seed) if args.seed is not None else None
+        self.seed = (
+            int(args.seed)
+            if args.seed is not None
+            else int.from_bytes(random.randbytes(16))
+        )
         self.start_at = int(args.start_at)
         self.output = args.output
         self.allow_duplicates = args.allow_duplicates
         self.no_pad = args.no_pad
+        self.image_path = args.image_path
 
         # initialize state
         self.nonce = 0
-        self.pad_amount = 0 if self.no_pad else len(str(self.amount))
         self.all_genomes = []
+
+    def __tomlify(self) -> str:
+        """
+        Converts a dictionary to TOML format.
+        """
+        toml = ""
+        obj = {
+            "amount": self.amount,
+            "seed": self.seed,
+            "start_at": self.start_at,
+            "output": self.output,
+            "allow_duplicates": self.allow_duplicates,
+            "no_pad": self.no_pad,
+        }
+        for key, value in obj.items():
+            if isinstance(value, dict):
+                toml += "[{}]\n".format(key)
+                toml += self.__tomlify(value)
+            else:
+                toml += "{} = {}\n".format(key, value)
+        return toml
 
     def __build_genome_metadata(self, token_id: int = 0):
         """
@@ -109,6 +146,7 @@ class Generator:
                 main_composite = Image.alpha_composite(main_composite, remaining)
             rgb_im = main_composite.convert("RGBA")
 
+        # create folder structure if it doesn't exist
         rgb_im.save("{}/images/{}.png".format(self.output, metadata["token_id"]))
 
     def generate(self):
@@ -131,32 +169,44 @@ class Generator:
             )
 
         self.logger.info("Generating %d NFTs", self.amount)
-        for i in tqdm(range(self.amount)):
-            token_id = self.start_at + i
-            self.__build_genome_metadata(token_id)
+        with get_progress_bar(self.amount) as bar:
+            for i in range(self.amount):
+                token_id = self.start_at + i
+                self.__build_genome_metadata(token_id)
+                write_json(
+                    "{}/metadata/{}.json".format(self.output, token_id),
+                    self.all_genomes[-1],
+                )
+                bar()
             write_json(
-                "{}/metadata/{}.json".format(self.output, token_id),
-                self.all_genomes[-1],
+                "{}/metadata/all-objects.json".format(
+                    self.output,
+                ),
+                self.all_genomes,
             )
-        write_json(
-            "{}/metadata/all-objects.json".format(
-                self.output,
-            ),
-            self.all_genomes,
-        )
+            write_file(
+                "{}/.generatorrc".format(
+                    self.output,
+                ),
+                self.__tomlify(),
+            )
 
         self.logger.info("Generating layered images for %d NFTs", self.amount)
 
-        # create thread pool
-        with concurrent.futures.ThreadPoolExecutor(max_workers=25) as executor:
-            # Create a list to hold the future objects
-            futures = []
+        # make folder structure
+        os.makedirs("{}/images/".format(self.output), exist_ok=True)
 
-            # Submit the tasks to the executor
-            for i in tqdm(range(self.amount)):
-                token_id = self.start_at + i
-                future = executor.submit(self.__build_genome_image, self.all_genomes[i])
-                futures.append(future)
+        with get_progress_bar(len(self.all_genomes)) as bar:
+            with ThreadPoolExecutor(max_workers=25) as pool:
+                try:
+                    futures = [
+                        pool.submit(self.__build_genome_image, genome)
+                        for genome in self.all_genomes
+                    ]
+                    for _ in as_completed(futures):
+                        bar()
+                except KeyboardInterrupt:
+                    self.logger.error("Generation interrupted by user")
+                    return
 
-            # Wait for all tasks to complete
-            concurrent.futures.wait(futures)
+        self.logger.info("Generation complete!")

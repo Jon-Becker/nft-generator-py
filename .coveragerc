@@ -1,5 +1,5 @@
 [run]
-omit = tests/**
+omit = tests/**,**/__init__.py
 relative_files = True
 
 [report]

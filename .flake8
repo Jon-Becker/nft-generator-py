@@ -1,0 +1,2 @@
+[flake8]
+exclude = env,venv,indexers-wip,migrations,migrations-wip,schemas-wip

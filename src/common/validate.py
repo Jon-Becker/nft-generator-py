@@ -1,41 +1,6 @@
 import os
 
-from src.common.exceptions import ArgumentValidationError, ConfigValidationError
-
-
-def validate_args(args) -> bool:
-    """
-    Validates the arguments passed to the program.
-
-    :param args: The arguments passed to the program.
-    :return: True if the arguments are valid, panics otherwise.
-    """
-
-    if not args.amount:
-        raise ArgumentValidationError("Missing mandatory option: -n / --amount")
-
-    if not args.config:
-        raise ArgumentValidationError("Missing mandatory option: -c / --config")
-    elif not os.path.isfile(args.config):
-        raise ArgumentValidationError(
-            "Configuration file not found: '{}'".format(args.config)
-        )
-
-    if args.output:
-        if not os.path.isdir(args.output):
-            try:
-                os.makedirs(args.output + "/images")
-                os.makedirs(args.output + "/metadata")
-            except OSError:
-                raise ArgumentValidationError(
-                    "Invalid output directory: '{}'".format(args.output)
-                )
-
-    if args.seed:
-        try:
-            int(args.seed)
-        except ValueError:
-            raise ArgumentValidationError("Invalid seed: '{}'".format(args.seed))
+from src.common.exceptions import ConfigValidationError
 
 
 def validate_config(config: dict) -> bool:
