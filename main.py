@@ -20,7 +20,7 @@ generator.add_argument(
 generator.add_argument("-n", "--amount", help="Amount to generate")
 generator.add_argument("-c", "--config", help="Path to configuration file")
 generator.add_argument(
-    "-o", "--output", help="Path to output folder", default="./output"
+    "-o", "--output", help="Path to output, either a folder or file", default="./output"
 )
 generator.add_argument("-s", "--seed", help="Seed for random generator", default=None)
 generator.add_argument(

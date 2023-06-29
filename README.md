@@ -3,25 +3,43 @@
 
 ![preview](https://github.com/Jon-Becker/nft-generator-py/blob/main/preview.png?raw=true)
 
-nft-generator-py is a python based NFT generator which programatically generates unique images using weighted layer files. The program is simple to use, and new layers can  be added by adding a new layer object and adding names, weights, and image files to the object.
-You can [View The Demo](https://jbecker.dev/demos/nft-generator-py) here.
+[![Unit Tests (on PR)](https://github.com/Jon-Becker/nft-generator-py/actions/workflows/tests-merged.yaml/badge.svg)](https://github.com/Jon-Becker/nft-generator-py/actions/workflows/tests-merged.yaml)
 
-## Usage
-As of v2.0.0, nft-generator-py will use the argparse library in order to support external configuration files and won't require users to interact with the python files themselves.
+nft-generator-py is a simple script which programatically generates images using weighted layer files.
 
-1. Install requirements: `python3 -m pip install -r requirements.txt`
-2. Make a configuration JSON file. See the configuration section below for specifications.
-3. Add layer files into the `/images` folder.
-4. Run the command `python3 generate.py --amount AMOUNT --config CONFIG` where:
-   1. `AMOUNT` is the amount of images to generate
-   2. `CONFIG` is the path pointing to a `.json` file containing valid program configuration.
+## Getting Started
+Clone the repository and install the requirements.
+```
+git clone https://github.com/Jon-Becker/nft-generator-py
+cd nft-generator-py
+python3 -m pip install -r requirements.txt
+```
 
-## How it works
-- A call to `generate_unique_images(amount, config)` is made, which is the meat of the application where all the processing happens.
-- The `config` object is read and for each object in the `layers` list, random values are selected and checked for uniqueness against all previously generated metadata files.
-- Once we have `amount` unique tokens created, we layer them against eachother and output them and their metadata to their respective folders, `./metadata` and `./images`.
+Create a configuration file, or use the `build_configuration` command to create a configuration file from a directory of traits. For more information on configuration files, see [Configuration](#configuration).
 
-### Configuration
+## CLI Options
+The following commands are available:
+| Command               | Usage                                                                   | Description                                                                          |
+| --------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `generate`            | `python3 main.py generate --config <config> [options]`                  | Generates a set of images using the provided configuration file.                     |
+| `build_configuration` | `python3 main.py build_configuration --trait-dir <trait_dir> [options]` | Builds a configuration file from a directory of traits.                              |
+| `validate`            | `python3 main.py validate --config <config> [options]`                  | Validates a configuration file.                                                      |
+| `update_metadata`     | `python3 main.py update_metadata --image-path <config> [options]`       | Updates the metadata files for all generated images at the provided `--output` path. |
+
+### Optional Arguments
+| Argument                           | Description                                                              |
+| ---------------------------------- | ------------------------------------------------------------------------ |
+| `-o <output>`, `--output <output>` | The path to the directory where the generated images will be saved.      |
+| `-c <config>`, `--config <config>` | The path to the configuration file.                                      |
+| `--trait-dir <trait_dir>`          | The path to the directory containing the trait images.                   |
+| `-n <amount>`, `--amount <amount>` | The number of images to generate.                                        |
+| `-v`, `--verbose`                  | Enables verbose logging.                                                 |
+| `--start-at <start_at>`            | The number to start counting from when generating images.                |
+| `--allow-duplicates`               | Allows duplicate images to be generated.                                 |
+| `--no-pad`                         | Disables zero-padding of tokenIds.                                       |
+| `-s <seed>`, `--seed <seed>`       | The seed to use when generating images. Allows for reproducible results. |
+
+## Configuration
 ```
 {
   "layers": [
@@ -68,13 +86,20 @@ The `incompatibilities` list contains an object that tells the program what laye
   - `value` is the name of the default selection which will be displayed in the metadata.
   - `filename` is the path to the image file that will be used as the default selection.
 
-As of `v1.0.2`, the IPFS CID may be updated programatically after generating NFTs and uploading `/images` to IPFS. This will update all metadata files to correctly point `"image"` to the IPFS CID.
-- *This is an optional step, and can be exited safely using `enter` or `control + c`.*
-
-#### Troubleshooting
+## Troubleshooting
 - All images should be in .png format.
 - All images should be the same size in pixels, IE: 1000x1000.
 - The weight values for each attribute should add up to equal 100.
 
-### Credits
-This project is completely coded by [Jonathan Becker](https://jbecker.dev), using no external libraries.
+## Contributing
+Before contributing, make a new branch with the following format:
+
+```
+user/{username}/{description}
+```
+
+Your names should be descriptive of the changes you are making. For example, if you are adding a new command, your branch name might be `user/jon-becker/some-new-command`.
+
+Your code will be reviewed and require at least one approval before being merged into the `main` branch.
+
+Please follow [this guide](https://www.freecodecamp.org/news/how-to-write-better-git-commit-messages/) when writing commit messages. Messages should be descriptive and clean.
