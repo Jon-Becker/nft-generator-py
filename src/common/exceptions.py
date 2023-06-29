@@ -1,0 +1,2 @@
+class ConfigValidationError(Exception):
+    pass

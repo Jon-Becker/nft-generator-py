@@ -12,9 +12,7 @@ As of v2.0.0, nft-generator-py will use the argparse library in order to support
 1. Install requirements: `python3 -m pip install -r requirements.txt`
 2. Make a configuration JSON file. See the configuration section below for specifications.
 3. Add layer files into the `/images` folder.
-4. Run the command `python3 generate.py --amount AMOUNT --config CONFIG`
-   
-   where:
+4. Run the command `python3 generate.py --amount AMOUNT --config CONFIG` where:
    1. `AMOUNT` is the amount of images to generate
    2. `CONFIG` is the path pointing to a `.json` file containing valid program configuration.
 
@@ -53,8 +51,8 @@ As of v2.0.0, nft-generator-py will use the argparse library in order to support
 }
 ```
 
-The `config` object is a dict that contains configuration instructions that can be changed to produce different outputs when running the program. Within metadata files, tokens are named using the configuration's `name` parameter, and described using the `description` parameter. 
-- In ascending order, tokenIds are appended to the `name` resulting in NFT metadata names such as NFT #0001. 
+The `config` object is a dict that contains configuration instructions that can be changed to produce different outputs when running the program. Within metadata files, tokens are named using the configuration's `name` parameter, and described using the `description` parameter.
+- In ascending order, tokenIds are appended to the `name` resulting in NFT metadata names such as NFT #0001.
 - tokenIds are padded to the largest amount generated. IE, generating 999 objects will result in names NFT #001, using the above configuration, and generating 1000 objects will result in NFT #0001.
 - As of `v1.0.2`, padding filenames has been removed.
 
@@ -80,4 +78,3 @@ As of `v1.0.2`, the IPFS CID may be updated programatically after generating NFT
 
 ### Credits
 This project is completely coded by [Jonathan Becker](https://jbecker.dev), using no external libraries.
-
