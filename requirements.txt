@@ -14,3 +14,7 @@ Pygments==2.11.0
 traitlets==5.1.1
 wcwidth==0.2.5
 argparse==1.4.0
+tqdm==4.65.0
+pytest-cov==4.1.0
+black
+pre-commit

@@ -4,3 +4,6 @@ metadata/*.json
 images/*.png
 .ipynb_checkpoints/
 *.pyc
+env
+venv
+output
