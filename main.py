@@ -58,11 +58,11 @@ generator.add_argument(
 args = generator.parse_args()
 
 if args.command == "validate":
-    generator: Generator = Generator(args)
+    generator: Generator = Generator(**args)
     generator.logger.info("Configuration is valid!")
 
 elif args.command == "generate":
-    generator: Generator = Generator(args)
+    generator: Generator = Generator(**args)
     generator.generate()
 
 elif args.command == "update_metadata":
