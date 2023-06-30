@@ -55,8 +55,8 @@ generator.add_argument(
 )
 
 # parse and validate arguments
-args = generator.parse_args()
-args=vars(args)
+args = vars(generator.parse_args())
+
 
 if args["command"] == "validate":
     generator: Generator = Generator(**args)
