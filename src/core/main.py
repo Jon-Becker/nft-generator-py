@@ -40,7 +40,7 @@ class Generator:
         self.seed = (
             int(args["seed"])
             if args["seed"] is not None
-            else int.from_bytes(random.randbytes(16))
+            else int.from_bytes(random.randbytes(16), byteorder='little')
         )
         self.start_at = int(args["start_at"])
         self.output = args["output"]

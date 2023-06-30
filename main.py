@@ -56,23 +56,24 @@ generator.add_argument(
 
 # parse and validate arguments
 args = generator.parse_args()
+args=vars(args)
 
-if args.command == "validate":
+if args["command"] == "validate":
     generator: Generator = Generator(**args)
     generator.logger.info("Configuration is valid!")
 
-elif args.command == "generate":
+elif args["command"] == "generate":
     generator: Generator = Generator(**args)
     generator.generate()
 
-elif args.command == "update_metadata":
-    update_metadata(args.image_path, args.output, args.verbose)
+elif args["command"] == "update_metadata":
+    update_metadata(args["image_path"], args["output"], args["verbose"])
 
-elif args.command == "build_config":
-    if args.output == "./output":
-        args.output = "generated.json"
+elif args["command"] == "build_config":
+    if args["output"] == "./output":
+        args["output"] = "generated.json"
 
-    if not args.trait_dir:
+    if not args["trait_dir"]:
         raise ValueError("No trait directory was provided.")
 
-    generate_config(args.trait_dir, args.output, args.verbose)
+    generate_config(args["trait_dir"], args["output"], args["verbose"])
