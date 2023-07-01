@@ -12,40 +12,40 @@ from src.utils.random import seeded_weighted_selection
 
 
 class Generator:
-    def __init__(self, args):
+    def __init__(self, **args):
         # set verbosity level and initialize logger
-        self.logger = get_logger(args.verbose)
+        self.logger = get_logger(args["verbose"])
 
-        if args.command in ["generate", "validate"]:
-            if not args.config:
+        if args["command"] in ["generate", "validate"]:
+            if not args["config"]:
                 raise ValueError("No configuration file was provided.")
-            elif not args.config.endswith(".json"):
-                raise ValueError("Invalid configuration file '{}'".format(args.config))
+            elif not args["config"].endswith(".json"):
+                raise ValueError("Invalid configuration file '{}'".format(args["config"]))
 
-            if not args.amount:
+            if not args["amount"]:
                 raise ValueError("No amount was provided.")
-            elif not args.amount.isnumeric():
-                raise ValueError("Invalid amount '{}'".format(args.amount))
-            self.amount = int(args.amount)
-            self.no_pad = args.no_pad
+            elif not args["amount"].isnumeric():
+                raise ValueError("Invalid amount '{}'".format(args["amount"]))
+            self.amount = int(args["amount"])
+            self.no_pad = args["no_pad"]
             self.pad_amount = 0 if self.no_pad else len(str(self.amount))
 
             # read configuration and validate it
-            self.logger.debug("Loading configuration from '%s'", args.config)
-            self.config = read_json(args.config)
+            self.logger.debug("Loading configuration from '%s'", args["config"])
+            self.config = read_json(args["config"])
             self.logger.debug("Validating configuration")
             validate_config(self.config)
 
         # set arguments
         self.seed = (
-            int(args.seed)
-            if args.seed is not None
-            else int.from_bytes(random.randbytes(16))
+            int(args["seed"])
+            if args["seed"] is not None
+            else int.from_bytes(random.randbytes(16), byteorder='little')
         )
-        self.start_at = int(args.start_at)
-        self.output = args.output
-        self.allow_duplicates = args.allow_duplicates
-        self.image_path = args.image_path
+        self.start_at = int(args["start_at"])
+        self.output = args["output"]
+        self.allow_duplicates = args["allow_duplicates"]
+        self.image_path = args["image_path"]
 
         # initialize state
         self.nonce = 0
