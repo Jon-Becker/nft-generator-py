@@ -22,7 +22,7 @@ The following commands are available:
 | Command               | Usage                                                                   | Description                                                                          |
 | --------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
 | `generate`            | `python3 main.py generate --config <config> [options]`                  | Generates a set of images using the provided configuration file.                     |
-| `build_configuration` | `python3 main.py build_configuration --trait-dir <trait_dir> [options]` | Builds a configuration file from a directory of traits.                              |
+| `build_config` | `python3 main.py build_config --trait-dir <trait_dir> [options]` | Builds a configuration file from a directory of traits.                              |
 | `validate`            | `python3 main.py validate --config <config> [options]`                  | Validates a configuration file.                                                      |
 | `update_metadata`     | `python3 main.py update_metadata --image-path <config> [options]`       | Updates the metadata files for all generated images at the provided `--output` path. |
 

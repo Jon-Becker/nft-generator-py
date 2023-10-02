@@ -14,7 +14,7 @@ def generate_config(trait_dir: str, output: str, verbose: int) -> None:
     # calculate weight
     weight = []
     for i in range(len(item_list)):
-        weight.append(100 / len(item_list[i]))
+        weight.append(int((100 / len(item_list[i]))))
         for j in range(len(item_list[i])):
             item_list[i][j] = item_list[i][j].split(".")[0]
 
