@@ -5,7 +5,7 @@
       "values": ["Blue", "Orange", "Purple", "Red", "Yellow"],
       "trait_path": "./trait-layers/backgrounds",
       "filename": ["blue", "orange", "purple", "red", "yellow"],
-      "weights": [20,20,20,20,20]
+      "weights": [20.0,20.0,20.0,20.0,20.0]
     },
     {
       "name": "Foreground",
