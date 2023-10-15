@@ -85,10 +85,10 @@ def validate_config(config: dict) -> bool:
                     )
 
                 for j, weight in enumerate(layer["weights"]):
-                    if not isinstance(weight, int):
+                    if not isinstance(weight, int) and not isinstance(weight, float):
                         raise ConfigValidationError(
-                            'config["layers"][{}]["{}"][{}]: Invalid layer weight: \'{}\'. Expected type: {}'.format(
-                                i, required_key[0], j, weight, int
+                            'config["layers"][{}]["{}"][{}]: Invalid layer weight: \'{}\'. Expected type: {} or {}'.format(
+                                i, required_key[0], j, weight, int, float
                             )
                         )
 
