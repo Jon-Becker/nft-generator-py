@@ -32,3 +32,5 @@ coverage.xml
 
 *metadata/*.json
 *images/*.png
+
+.DS_Store
