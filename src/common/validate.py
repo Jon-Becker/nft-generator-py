@@ -92,7 +92,9 @@ def validate_config(config: dict) -> bool:
                             )
                         )
 
-                if sum(layer["weights"]) != 100:
+                # ensure the sum of the weights is 100
+                # make sure to round the sum to 100 to account for floating point errors
+                if round(sum(layer["weights"]), 2) != 100:
                     raise ConfigValidationError(
                         'config["layers"][{}]["{}"]: The sum of the weights must be 100. Current sum: {}'.format(
                             i, required_key[0], sum(layer["weights"])
