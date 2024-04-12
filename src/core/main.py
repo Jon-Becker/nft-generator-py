@@ -20,7 +20,9 @@ class Generator:
             if not args["config"]:
                 raise ValueError("No configuration file was provided.")
             elif not args["config"].endswith(".json"):
-                raise ValueError("Invalid configuration file '{}'".format(args["config"]))
+                raise ValueError(
+                    "Invalid configuration file '{}'".format(args["config"])
+                )
 
             if not args["amount"]:
                 raise ValueError("No amount was provided.")
@@ -40,7 +42,7 @@ class Generator:
         self.seed = (
             int(args["seed"])
             if args["seed"] is not None
-            else int.from_bytes(random.randbytes(16), byteorder='little')
+            else int.from_bytes(random.randbytes(16), byteorder="little")
         )
         self.start_at = int(args["start_at"])
         self.output = args["output"]
@@ -124,30 +126,36 @@ class Generator:
         Builds the NFT image for a single NFT.
         """
         layers = []
-        for index, attr in enumerate(metadata["attributes"]):
-            # get the image for the trait
-            for i, trait in enumerate(self.config["layers"][index]["values"]):
-                if trait == attr["value"]:
-                    layers.append(
-                        Image.open(
-                            f'{self.config["layers"][index]["trait_path"]}/{self.config["layers"][index]["filename"][i]}.png'
-                        ).convert("RGBA")
-                    )
-                    break
+        try:
+            for index, attr in enumerate(metadata["attributes"]):
+                # get the image for the trait
+                for i, trait in enumerate(self.config["layers"][index]["values"]):
+                    if trait == attr["value"]:
+                        layers.append(
+                            Image.open(
+                                f'{self.config["layers"][index]["trait_path"]}/{self.config["layers"][index]["filename"][i]}.png'
+                            ).convert("RGBA")
+                        )
+                        break
 
-        if len(layers) == 1:
-            rgb_im = layers[0].convert("RGBA")
-        elif len(layers) == 2:
-            main_composite = Image.alpha_composite(layers[0], layers[1])
-            rgb_im = main_composite.convert("RGBA")
-        elif len(layers) >= 3:
-            main_composite = Image.alpha_composite(layers[0], layers[1])
-            for index, remaining in enumerate(layers):
-                main_composite = Image.alpha_composite(main_composite, remaining)
-            rgb_im = main_composite.convert("RGBA")
+            if len(layers) == 1:
+                rgb_im = layers[0].convert("RGBA")
+            elif len(layers) == 2:
+                main_composite = Image.alpha_composite(layers[0], layers[1])
+                rgb_im = main_composite.convert("RGBA")
+            elif len(layers) >= 3:
+                main_composite = Image.alpha_composite(layers[0], layers[1])
+                for index, remaining in enumerate(layers):
+                    main_composite = Image.alpha_composite(main_composite, remaining)
+                rgb_im = main_composite.convert("RGBA")
 
-        # create folder structure if it doesn't exist
-        rgb_im.save("{}/images/{}.png".format(self.output, metadata["token_id"]))
+            # create folder structure if it doesn't exist
+            rgb_im.save("{}/images/{}.png".format(self.output, metadata["token_id"]))
+
+        except Exception as e:
+            self.logger.error(
+                "Error generating image for token %d: %s", metadata["token_id"], e
+            )
 
     def generate(self):
         """
