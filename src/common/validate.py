@@ -121,6 +121,19 @@ def validate_config(config: dict) -> bool:
                             )
                         )
 
+        # ensure each layer["values"] has a corresponding layer["filename"] and layer["weights"]
+        if len(layer["values"]) != len(layer["filename"]) or len(
+            layer["values"]
+        ) != len(layer["weights"]):
+            raise ConfigValidationError(
+                'config["layers"][{}]: The number of values, filenames, and weights must be the same. Current values: {}, filenames: {}, weights: {}'.format(
+                    i,
+                    len(layer["values"]),
+                    len(layer["filename"]),
+                    len(layer["weights"]),
+                )
+            )
+
     # check the incompatibilities and their config values
     for i, incompatibility in enumerate(config["incompatibilities"]):
         # check if all required incompatibility keys are present

@@ -45,6 +45,66 @@ def test_validate_config_missing_key():
         validate_config(config)
 
 
+def test_validate_config_layer_mismatch_weights():
+    config = {
+        "layers": [
+            {
+                "name": "Background",
+                "values": ["Python Logo", "some other value"],
+                "trait_path": "./trait-layers/foreground",
+                "filename": ["logo", "some file"],
+                "weights": [100],
+            }
+        ],
+        "baseURI": ".",
+        "name": "NFT #",
+        "description": "This is a description for this NFT series.",
+    }
+
+    with pytest.raises(ConfigValidationError):
+        validate_config(config)
+
+
+def test_validate_config_layer_mismatch_filename():
+    config = {
+        "layers": [
+            {
+                "name": "Background",
+                "values": ["Python Logo", "some other value"],
+                "trait_path": "./trait-layers/foreground",
+                "filename": ["logo"],
+                "weights": [100, 100],
+            }
+        ],
+        "baseURI": ".",
+        "name": "NFT #",
+        "description": "This is a description for this NFT series.",
+    }
+
+    with pytest.raises(ConfigValidationError):
+        validate_config(config)
+
+
+def test_validate_config_layer_mismatch_values():
+    config = {
+        "layers": [
+            {
+                "name": "Background",
+                "values": ["Python Logo"],
+                "trait_path": "./trait-layers/foreground",
+                "filename": ["logo", "logo 2"],
+                "weights": [100, 100],
+            }
+        ],
+        "baseURI": ".",
+        "name": "NFT #",
+        "description": "This is a description for this NFT series.",
+    }
+
+    with pytest.raises(ConfigValidationError):
+        validate_config(config)
+
+
 def test_validate_config_incorrect_type():
     config = {
         "layers": "should be a list",
