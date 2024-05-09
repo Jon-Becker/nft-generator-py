@@ -52,6 +52,7 @@ class Generator:
         # initialize state
         self.nonce = 0
         self.all_genomes = []
+        self.all_combinations = []
 
     def __tomlify(self) -> str:
         """
@@ -102,9 +103,10 @@ class Generator:
                     else:
                         return self.__build_genome_metadata(token_id)
 
-        if genome_traits in self.all_genomes and not self.allow_duplicates:
+        if genome_traits in self.all_combinations and not self.allow_duplicates:
             return self.__build_genome_metadata(token_id)
         else:
+            self.all_combinations.append(genome_traits)
             self.all_genomes.append(
                 {
                     "token_id": token_id,
